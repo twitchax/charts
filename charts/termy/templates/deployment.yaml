@@ -3,11 +3,6 @@ kind: Namespace
 metadata:
   name: termy
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: termy-terminals
----
 # TODO: Add service account and role binding (possibly also need role).
 apiVersion: v1
 kind: Secret
@@ -20,23 +15,49 @@ stringData:
   supw: {{ required "supw is required" .Values.supw }}
   kubeconfig: |-
 {{ required "kubeconfig is required" .Values.kubeconfig | indent 4 }}
-  tls.crt: |-
-{{ required "tlscrt is required" .Values.tlscrt | indent 4 }}
-  tls.key: |-
-{{ required "tlskey is required" .Values.tlskey | indent 4 }}
 ---
+kind: Service
 apiVersion: v1
-kind: Secret
 metadata:
-  name: termy-secrets
-  namespace: termy-terminals
-type: Opaque
-stringData:
-  supw: {{ .Values.supw }}
-  tls.crt: |-
-{{ .Values.tlscrt | indent 4 }}
-  tls.key: |-
-{{ .Values.tlskey | indent 4 }}
+  name: termy-svc
+  labels:
+    app: termy
+  namespace: termy
+spec:
+  selector:
+    app: termy
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: termy-in
+  labels:
+    app: termy
+  namespace: termy
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+spec:
+  rules:
+  - host: {{ required "hostname is required" .Values.hostname }}
+    http:
+      paths:
+      - backend:
+          serviceName: termy-svc
+          servicePort: 80
+  - host: {{ printf "dashboard." .Values.hostname }}
+    http:
+      paths:
+      - backend:
+          serviceName: termy-svc
+          servicePort: 80
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
