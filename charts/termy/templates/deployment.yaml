@@ -52,12 +52,6 @@ spec:
       - backend:
           serviceName: termy-svc
           servicePort: 80
-  - host: {{ "dashboard." .Values.hostname }}
-    http:
-      paths:
-      - backend:
-          serviceName: termy-svc
-          servicePort: 80
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
