@@ -11,7 +11,6 @@ metadata:
   namespace: termy
 type: Opaque
 stringData:
-  hostname: {{ required "hostname is required" .Values.hostname }}
   supw: {{ required "supw is required" .Values.supw }}
   kubeconfig: |-
 {{ required "kubeconfig is required" .Values.kubeconfig | indent 4 }}
@@ -84,6 +83,13 @@ spec:
         - name: secrets
           readOnly: true
           mountPath: /etc/secrets
+        env:
+        - name: TERMY_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: TERMY_HOSTNAME
+          value: {{ required "hostname is required" .Values.hostname }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
       volumes:
