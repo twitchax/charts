@@ -52,7 +52,7 @@ spec:
       - backend:
           serviceName: termy-svc
           servicePort: 80
-  - host: {{ printf "dashboard." .Values.hostname }}
+  - host: {{ "dashboard." .Values.hostname }}
     http:
       paths:
       - backend:
