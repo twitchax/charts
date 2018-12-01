@@ -15,7 +15,6 @@ metadata:
   name: termy-svc
   labels:
     app: termy
-  namespace: termy
 spec:
   selector:
     app: termy
