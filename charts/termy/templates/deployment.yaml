@@ -1,14 +1,8 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: termy
----
 # TODO: Add service account and role binding (possibly also need role).
 apiVersion: v1
 kind: Secret
 metadata:
   name: termy-secrets
-  namespace: termy
 type: Opaque
 stringData:
   supw: {{ required "supw is required" .Values.supw }}
@@ -37,7 +31,6 @@ metadata:
   name: termy-in
   labels:
     app: termy
-  namespace: termy
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
@@ -62,7 +55,6 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   name: termy
-  namespace: termy
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
