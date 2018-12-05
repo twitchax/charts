@@ -1,4 +1,20 @@
-# TODO: Add service account and role binding (possibly also need role).
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: termy-service-account
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: termy-role-binding
+subjects:
+- kind: ServiceAccount
+  name: termy-service-account
+roleRef:
+  kind: ClusterRole
+  name: admin
+---
 apiVersion: v1
 kind: Secret
 metadata:
@@ -6,8 +22,6 @@ metadata:
 type: Opaque
 stringData:
   supw: {{ required "supw is required" .Values.supw }}
-  kubeconfig: |-
-{{ required "kubeconfig is required" .Values.kubeconfig | indent 4 }}
 ---
 kind: Service
 apiVersion: v1
@@ -64,6 +78,7 @@ spec:
       labels:
         app: termy
     spec:
+      serviceAccountName: termy-service-account
       containers:
       - name: termy
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
