@@ -37,6 +37,28 @@ spec:
     protocol: TCP
     port: 80
     targetPort: 80
+{{- if ne .Values.clusterIssuer null }}
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: termy-crt
+spec:
+  secretName: termy-crt
+  dnsNames:
+  - {{ required "hostname is required" .Values.hostname }}
+  - {{ printf "*.%s" .Values.hostname }}
+  acme:
+    config:
+    - http01:
+        ingressClass: nginx
+      domains:
+      - {{ required "hostname is required" .Values.hostname }}
+      - {{ printf "*.%s" .Values.hostname }}
+  issuerRef:
+    name: {{ .Values.clusterIssuer }}
+    kind: ClusterIssuer
+{{- end}}
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -57,6 +79,8 @@ spec:
       - backend:
           serviceName: termy-svc
           servicePort: 80
+  tls:
+  - secretName: termy-crt
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
