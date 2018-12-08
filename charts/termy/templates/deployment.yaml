@@ -49,8 +49,8 @@ spec:
   - "{{ printf "*.%s" .Values.hostname }}"
   acme:
     config:
-    - http01:
-        ingressClass: nginx
+    - dns01:
+        provider: dns
       domains:
       - {{ required "hostname is required" .Values.hostname }}
       - "{{ printf "*.%s" .Values.hostname }}"
