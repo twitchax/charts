@@ -45,14 +45,12 @@ metadata:
 spec:
   secretName: termy-crt
   dnsNames:
-  - {{ required "hostname is required" .Values.hostname }}
   - "{{ printf "*.%s" .Values.hostname }}"
   acme:
     config:
     - dns01:
         provider: dns
       domains:
-      - {{ required "hostname is required" .Values.hostname }}
       - "{{ printf "*.%s" .Values.hostname }}"
   issuerRef:
     name: {{ .Values.clusterIssuer }}
