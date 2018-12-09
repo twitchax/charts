@@ -46,14 +46,12 @@ spec:
   secretName: termy-crt
   dnsNames:
   - {{ required "hostname is required" .Values.hostname }}
-  - "{{ printf "*.%s" .Values.hostname }}"
   acme:
     config:
     - http01:
       ingressClass: nginx
       domains:
       - {{ required "hostname is required" .Values.hostname }}
-      - "{{ printf "*.%s" .Values.hostname }}"
   issuerRef:
     name: {{ .Values.clusterIssuer }}
     kind: ClusterIssuer
