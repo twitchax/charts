@@ -49,7 +49,7 @@ spec:
   acme:
     config:
     - http01:
-      ingressClass: nginx
+        ingressClass: nginx
       domains:
       - {{ required "hostname is required" .Values.hostname }}
   issuerRef:
